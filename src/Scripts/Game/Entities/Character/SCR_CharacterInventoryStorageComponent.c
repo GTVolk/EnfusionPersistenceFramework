@@ -69,13 +69,9 @@ modded class SCR_CharacterInventoryStorageComponent
 		if (m_aQuickSlotsHistory.Count() < slotsCount)
 			m_aQuickSlotsHistory.Resize(slotsCount);
 
-		Print("EPF_Rpc_UpdateQuickSlotItems");
-		
 		foreach (int idx, RplId rplId : rplIds)
 		{
 			IEntity slotEntity = EPF_NetworkUtils.FindEntityByRplId(rplId);
-			PrintFormat("idx: %1, rplId:%2, entity:%3", idx, rplId, slotEntity);
-
 			if (slotEntity)
 			{
 				super.StoreItemToQuickSlot(slotEntity, idx, true);
