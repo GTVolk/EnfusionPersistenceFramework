@@ -94,7 +94,10 @@ class EPF_EntitySaveData : EPF_MetaDataDbEntity
 		{
 			typename saveDataType = EPF_Utils.TrimEnd(componentSaveDataClass.ClassName(), 5).ToType();
 			if (!saveDataType)
+			{
+				Debug.Error(string.Format("Component save-data class class '%1' is not implemented. Check that the save-data classes have the correct naming pattern.", componentSaveDataClass.ClassName()));
 				return EPF_EReadResult.ERROR;
+			}
 
 			array<Managed> outComponents();
 			entity.FindComponents(EPF_ComponentSaveDataType.Get(componentSaveDataClass.Type()), outComponents);
@@ -108,12 +111,18 @@ class EPF_EntitySaveData : EPF_MetaDataDbEntity
 
 				EPF_ComponentSaveData componentSaveData = EPF_ComponentSaveData.Cast(saveDataType.Spawn());
 				if (!componentSaveData)
+				{
+					Debug.Error(string.Format("Failed to instantiate component save data class '%1'.", saveDataType.ToString()));
 					return EPF_EReadResult.ERROR;
+				}
 
 				componentSaveDataClass.m_bTrimDefaults = attributes.m_bTrimDefaults;
 				EPF_EReadResult componentRead = componentSaveData.ReadFrom(entity, GenericComponent.Cast(componentRef), componentSaveDataClass);
 				if (componentRead == EPF_EReadResult.ERROR)
+				{
+					Debug.Error(string.Format("Failed to read save-data from component '%1' using '%2'.", componentRef.ClassName(), saveDataType.ToString()));
 					return componentRead;
+				}
 
 				if (componentRead == EPF_EReadResult.DEFAULT && attributes.m_bTrimDefaults)
 					continue;
